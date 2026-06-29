@@ -3,6 +3,7 @@ import { useWallet } from "../src/features/wallet/useWallet";
 import { AppHeader } from "../src/components/AppHeader";
 import { Card } from "../src/components/Card";
 import { Button } from "../src/components/Button";
+import { WalletRequired } from "../src/components/WalletRequired";
 import { appConfig } from "../src/config/appConfig";
 import { resetAppState } from "../src/lib/resetAppState";
 import React, { useState } from "react";
@@ -24,50 +25,54 @@ export default function Settings() {
   const chainId = appConfig.chainId;
 
   return (
-    <View className="flex-1 bg-background" testID="settings-screen">
-      <AppHeader title="Settings" showBack />
-      <ScrollView className="flex-1 px-4 py-6">
-        <Text className="text-lg font-bold text-text mb-3">Protocol Configuration</Text>
-        <Card className="mb-6">
-          <View className="flex-row justify-between py-2 border-b border-border">
-            <Text className="text-text-muted">API URL</Text>
-            <Text className="text-text font-medium" testID="settings-api-url">
-              {apiUrl}
-            </Text>
-          </View>
-          <View className="flex-row justify-between py-2 border-b border-border">
-            <Text className="text-text-muted">Default Chain ID</Text>
-            <Text className="text-text font-medium" testID="settings-chain-id">
-              {chainId}
-            </Text>
-          </View>
-          <View className="flex-row justify-between py-2">
-            <Text className="text-text-muted">SDK Version</Text>
-            <Text className="text-text font-medium" testID="settings-sdk-version">
-              0.1.0-mvp
-            </Text>
-          </View>
-        </Card>
+    <WalletRequired>
+      <View className="flex-1 bg-background" testID="settings-screen">
+        <AppHeader title="Settings" showBack />
+        <ScrollView className="flex-1 px-4 py-6">
+          <Text className="text-lg font-bold text-text mb-3">Protocol Configuration</Text>
+          <Card className="mb-6">
+            <View className="flex-row justify-between py-2 border-b border-border">
+              <Text className="text-text-muted">API URL</Text>
+              <Text className="text-text font-medium" testID="settings-api-url">
+                {apiUrl}
+              </Text>
+            </View>
+            <View className="flex-row justify-between py-2 border-b border-border">
+              <Text className="text-text-muted">Default Chain ID</Text>
+              <Text className="text-text font-medium" testID="settings-chain-id">
+                {chainId}
+              </Text>
+            </View>
+            <View className="flex-row justify-between py-2">
+              <Text className="text-text-muted">SDK Version</Text>
+              <Text className="text-text font-medium" testID="settings-sdk-version">
+                0.1.0-mvp
+              </Text>
+            </View>
+          </Card>
 
-        <Text className="text-lg font-bold text-text mb-3">Account</Text>
-        <Card className="mb-8">
-          <Text className="text-text-muted mb-4">
-            will disconnect your current wallet address and clear any local cache.
-          </Text>
-          <Button
-            title="Reset App State"
-            onPress={handleReset}
-            variant="danger"
-            loading={isResetting}
-            disabled={!isConnected || isResetting}
-          />
-        </Card>
+          <Text className="text-lg font-bold text-text mb-3">Account</Text>
+          <Card className="mb-8">
+            <WalletRequired redirect={false}>
+              <Text className="text-text-muted mb-4">
+                will disconnect your current wallet address and clear any local cache.
+              </Text>
+              <Button
+                title="Reset App State"
+                onPress={handleReset}
+                variant="danger"
+                loading={isResetting}
+                disabled={isResetting}
+              />
+            </WalletRequired>
+          </Card>
 
-        <View className="items-center mt-12">
-          <Text className="text-text-muted text-sm italic">GuildPass Mobile MVP v1.0.0</Text>
-          <Text className="text-text-muted text-xs mt-1">Built with Expo & NativeWind</Text>
-        </View>
-      </ScrollView>
-    </View>
+          <View className="items-center mt-12">
+            <Text className="text-text-muted text-sm italic">GuildPass Mobile MVP v1.0.0</Text>
+            <Text className="text-text-muted text-xs mt-1">Built with Expo and NativeWind</Text>
+          </View>
+        </ScrollView>
+      </View>
+    </WalletRequired>
   );
 }

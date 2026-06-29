@@ -27,6 +27,8 @@ export default function AccessCheck() {
   const [scanError, setScanError] = useState<string | null>(null);
   const [scannedPayload, setScannedPayload] = useState<ParsedAccessQrPayload | null>(null);
   const [addressError, setAddressError] = useState<string | null>(null);
+  const [guildIdError, setGuildIdError] = useState<string | null>(null);
+  const [resourceIdError, setResourceIdError] = useState<string | null>(null);
   const { isOffline } = useNetworkStatus();
 
   const accessCheck = useAccessCheck();
@@ -46,6 +48,12 @@ export default function AccessCheck() {
   useEffect(() => {
     void hydrateHistory();
   }, [hydrateHistory]);
+
+  useEffect(() => {
+    setAddress(currentWallet || "");
+    setAddressError(null);
+    resetAccessCheck();
+  }, [currentWallet, resetAccessCheck]);
 
   const resetCompletedCheck = () => {
     if (result || error) {
@@ -85,17 +93,34 @@ export default function AccessCheck() {
 
   const handleGuildIdChange = (nextGuildId: string) => {
     setGuildId(nextGuildId);
+    setGuildIdError(null);
     resetCompletedCheck();
   };
 
   const handleResourceIdChange = (nextResourceId: string) => {
     setResourceId(nextResourceId);
+    setResourceIdError(null);
     resetCompletedCheck();
   };
 
   const handleCheck = () => {
     const trimmedGuildId = guildId.trim();
     const trimmedResourceId = resourceId.trim();
+    let hasError = false;
+
+    if (!trimmedGuildId) {
+      setGuildIdError("Guild ID is required");
+      hasError = true;
+    } else {
+      setGuildIdError(null);
+    }
+
+    if (!trimmedResourceId) {
+      setResourceIdError("Resource ID is required");
+      hasError = true;
+    } else {
+      setResourceIdError(null);
+    }
 
     if (!address || !trimmedGuildId || !trimmedResourceId) {
       return;
@@ -155,11 +180,12 @@ export default function AccessCheck() {
               value={guildId}
               onChangeText={handleGuildIdChange}
               placeholder="e.g. alpha-guild"
-              className="bg-white border border-border rounded-xl p-4 text-text text-lg"
+              className={`bg-white border ${guildIdError ? "border-error" : "border-border"} rounded-xl p-4 text-text text-lg`}
               accessibilityLabel="Guild ID"
               accessibilityHint="Enter the guild identifier"
               testID="access-check-guild-id-input"
             />
+            {guildIdError && <Text className="text-error text-sm mt-1">{guildIdError}</Text>}
           </View>
 
           <View className="mt-4">
@@ -168,11 +194,12 @@ export default function AccessCheck() {
               value={resourceId}
               onChangeText={handleResourceIdChange}
               placeholder="e.g. secret-channel"
-              className="bg-white border border-border rounded-xl p-4 text-text text-lg"
+              className={`bg-white border ${resourceIdError ? "border-error" : "border-border"} rounded-xl p-4 text-text text-lg`}
               accessibilityLabel="Resource ID"
               accessibilityHint="Enter the resource identifier"
               testID="access-check-resource-id-input"
             />
+            {resourceIdError && <Text className="text-error text-sm mt-1">{resourceIdError}</Text>}
           </View>
 
           <Button
@@ -180,7 +207,7 @@ export default function AccessCheck() {
             onPress={handleCheck}
             className="mt-6"
             loading={isPending}
-            disabled={!address || !guildId || !resourceId || !!addressError || isOffline}
+            disabled={!address || !guildId.trim() || !resourceId.trim() || !!addressError || !!guildIdError || !!resourceIdError || isOffline}
           />
         </Card>
 
