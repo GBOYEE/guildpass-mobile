@@ -1,13 +1,37 @@
 import { Stack } from "expo-router";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { View } from "react-native";
 import { queryClient } from "../src/lib/queryClient";
 import { asyncStoragePersister } from "../src/lib/queryPersister";
 import { isPersistableQuery, QUERY_GC_TIME_MS } from "../src/lib/offlineCache";
 import { initConnectivityService } from "../src/features/network/connectivityService";
 import { ErrorBoundary } from "../src/components/ErrorBoundary";
+import { ThemeProvider, useTheme } from "../src/features/theme";
 
 initConnectivityService();
+
+function ThemedStack() {
+  const { isDark } = useTheme();
+  const backgroundColor = isDark ? "#0f172a" : "#f8fafc";
+
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false,
+        contentStyle: { backgroundColor },
+      }}
+    >
+      <Stack.Screen name="index" />
+      <Stack.Screen name="onboarding" />
+      <Stack.Screen name="profile" />
+      <Stack.Screen name="guilds" />
+      <Stack.Screen name="guilds/[guildId]" />
+      <Stack.Screen name="access-check" />
+      <Stack.Screen name="access-scanner" />
+      <Stack.Screen name="settings" />
+      <Stack.Screen name="deep-link-error" />
+    </Stack>
+  );
+}
 
 export default function RootLayout() {
   return (
@@ -23,24 +47,9 @@ export default function RootLayout() {
           },
         }}
       >
-        <View className="flex-1 bg-background">
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: "#f8fafc" },
-            }}
-          >
-            <Stack.Screen name="index" />
-            <Stack.Screen name="onboarding" />
-            <Stack.Screen name="profile" />
-            <Stack.Screen name="guilds" />
-            <Stack.Screen name="guilds/[guildId]" />
-            <Stack.Screen name="access-check" />
-            <Stack.Screen name="access-scanner" />
-            <Stack.Screen name="settings" />
-            <Stack.Screen name="deep-link-error" />
-          </Stack>
-        </View>
+        <ThemeProvider>
+          <ThemedStack />
+        </ThemeProvider>
       </PersistQueryClientProvider>
     </ErrorBoundary>
   );

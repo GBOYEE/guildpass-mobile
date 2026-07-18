@@ -8,12 +8,14 @@ import { LoadingState } from "../src/components/LoadingState";
 import { ErrorState } from "../src/components/ErrorState";
 import { EmptyState } from "../src/components/EmptyState";
 import { WalletRequired } from "../src/components/WalletRequired";
+import { useTheme } from "../src/features/theme";
 import React from "react";
 
 export default function Guilds() {
   const router = useRouter();
   const { walletAddress } = useWallet();
   const { getMembership } = useMembership(walletAddress);
+  const { isDark } = useTheme();
 
   const exampleGuilds = [
     { id: "guild_abc", name: "Alpha Guild", isActive: true, roleCount: 3 },
@@ -23,7 +25,10 @@ export default function Guilds() {
 
   return (
     <WalletRequired>
-      <View className="flex-1 bg-background" testID="guilds-screen">
+      <View
+        className={`flex-1 ${isDark ? "bg-dark-background" : "bg-background"}`}
+        testID="guilds-screen"
+      >
         <AppHeader title="My Guilds" showBack />
         <FlatList
           data={exampleGuilds}

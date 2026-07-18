@@ -8,11 +8,13 @@ import { WalletInput } from "../src/components/WalletInput";
 import { Button } from "../src/components/Button";
 import { StaleDataBanner } from "../src/components/StaleDataBanner";
 import { useNetworkStatus } from "../src/features/offline/useNetworkStatus";
+import { useTheme } from "../src/features/theme";
 
 export default function Profile() {
   const router = useRouter();
   const { walletAddress, isConnected, connectManually, disconnect } = useWallet();
   const { isOffline } = useNetworkStatus();
+  const { isDark } = useTheme();
   const [inputValue, setInputValue] = useState(walletAddress || "");
   const [error, setError] = useState<string | null>(null);
 
@@ -26,15 +28,21 @@ export default function Profile() {
     router.push("/guilds");
   };
 
+  const textClass = isDark ? "text-dark-text" : "text-text";
+  const mutedTextClass = isDark ? "text-dark-text-muted" : "text-text-muted";
+
   return (
-    <View className="flex-1 bg-background" testID="profile-screen">
+    <View
+      className={`flex-1 ${isDark ? "bg-dark-background" : "bg-background"}`}
+      testID="profile-screen"
+    >
       <AppHeader title="Profile" />
       <ScrollView className="flex-1 px-4 py-6">
         {isOffline ? <StaleDataBanner reason="offline" /> : null}
         {!isConnected ? (
           <View testID="wallet-connect-form">
-            <Text className="text-2xl font-bold text-text mb-2">Connect Wallet</Text>
-            <Text className="text-text-muted mb-8">
+            <Text className={`text-2xl font-bold mb-2 ${textClass}`}>Connect Wallet</Text>
+            <Text className={`mb-8 ${mutedTextClass}`}>
               address to view your memberships and roles.
             </Text>
             <Card className="mb-8">
@@ -58,9 +66,9 @@ export default function Profile() {
         ) : (
           <View>
             <Card className="mb-6">
-              <Text className="text-text-muted text-sm mb-1">CONNECTED WALLET</Text>
+              <Text className={`text-sm mb-1 ${mutedTextClass}`}>CONNECTED WALLET</Text>
               <Text
-                className="text-lg font-bold text-text mb-4"
+                className={`text-lg font-bold mb-4 ${textClass}`}
                 numberOfLines={1}
                 testID="connected-wallet-address"
               >
@@ -86,8 +94,8 @@ export default function Profile() {
               >
                 <Card className="flex-row justify-between items-center">
                   <View>
-                    <Text className="text-xl font-bold text-text">My Guilds</Text>
-                    <Text className="text-text-muted">View your memberships and roles</Text>
+                    <Text className={`text-xl font-bold ${textClass}`}>My Guilds</Text>
+                    <Text className={mutedTextClass}>View your memberships and roles</Text>
                   </View>
                   <Text className="text-primary text-2xl">→</Text>
                 </Card>
@@ -104,8 +112,8 @@ export default function Profile() {
               >
                 <Card className="flex-row justify-between items-center">
                   <View>
-                    <Text className="text-xl font-bold text-text">Access Check</Text>
-                    <Text className="text-text-muted">Verify resource access status</Text>
+                    <Text className={`text-xl font-bold ${textClass}`}>Access Check</Text>
+                    <Text className={mutedTextClass}>Verify resource access status</Text>
                   </View>
                   <Text className="text-primary text-2xl">→</Text>
                 </Card>
@@ -122,8 +130,8 @@ export default function Profile() {
               >
                 <Card className="flex-row justify-between items-center">
                   <View>
-                    <Text className="text-xl font-bold text-text">App Settings</Text>
-                    <Text className="text-text-muted">Configuration and info</Text>
+                    <Text className={`text-xl font-bold ${textClass}`}>App Settings</Text>
+                    <Text className={mutedTextClass}>Configuration and info</Text>
                   </View>
                   <Text className="text-primary text-2xl">→</Text>
                 </Card>

@@ -16,11 +16,13 @@ import { validateAndNormalizeAddress } from "../src/lib/walletValidation";
 import { useAccessHistoryStore } from "../src/features/access/accessHistory.store";
 import { useNetworkStatus } from "../src/features/offline/useNetworkStatus";
 import { StaleDataBanner } from "../src/components/StaleDataBanner";
+import { useTheme } from "../src/features/theme";
 
 export default function AccessCheck() {
   const router = useRouter();
   const { qrPayload } = useLocalSearchParams<{ qrPayload?: string | string[] }>();
   const { walletAddress: currentWallet } = useWallet();
+  const { isDark } = useTheme();
   const [address, setAddress] = useState(currentWallet || "");
   const [guildId, setGuildId] = useState("");
   const [resourceId, setResourceId] = useState("");
@@ -30,6 +32,12 @@ export default function AccessCheck() {
   const [guildIdError, setGuildIdError] = useState<string | null>(null);
   const [resourceIdError, setResourceIdError] = useState<string | null>(null);
   const { isOffline } = useNetworkStatus();
+
+  const bgClass = isDark ? "bg-dark-background" : "bg-background";
+  const textClass = isDark ? "text-dark-text" : "text-text";
+  const mutedTextClass = isDark ? "text-dark-text-muted" : "text-text-muted";
+  const inputBgClass = isDark ? "bg-dark-card" : "bg-white";
+  const borderClass = isDark ? "border-dark-border" : "border-border";
 
   const accessCheck = useAccessCheck();
   const {
@@ -153,7 +161,7 @@ export default function AccessCheck() {
   };
 
   return (
-    <View className="flex-1 bg-background" testID="access-check-screen">
+    <View className={`flex-1 ${bgClass}`} testID="access-check-screen">
       <AppHeader title="Access Check" showBack />
       <ScrollView className="flex-1 px-4 py-6">
         {isOffline ? <StaleDataBanner reason="offline" cautionary /> : null}
@@ -175,12 +183,13 @@ export default function AccessCheck() {
           />
 
           <View className="mt-4">
-            <Text className="text-text-muted mb-2 font-medium">Guild ID</Text>
+            <Text className={`mb-2 font-medium ${mutedTextClass}`}>Guild ID</Text>
             <TextInput
               value={guildId}
               onChangeText={handleGuildIdChange}
               placeholder="e.g. alpha-guild"
-              className={`bg-white border ${guildIdError ? "border-error" : "border-border"} rounded-xl p-4 text-text text-lg`}
+              placeholderTextColor={isDark ? "#94a3b8" : "#64748b"}
+              className={`border rounded-xl p-4 text-lg ${inputBgClass} ${guildIdError ? "border-error" : borderClass} ${textClass}`}
               accessibilityLabel="Guild ID"
               accessibilityHint="Enter the guild identifier"
               testID="access-check-guild-id-input"
@@ -189,12 +198,13 @@ export default function AccessCheck() {
           </View>
 
           <View className="mt-4">
-            <Text className="text-text-muted mb-2 font-medium">Resource ID</Text>
+            <Text className={`mb-2 font-medium ${mutedTextClass}`}>Resource ID</Text>
             <TextInput
               value={resourceId}
               onChangeText={handleResourceIdChange}
               placeholder="e.g. secret-channel"
-              className={`bg-white border ${resourceIdError ? "border-error" : "border-border"} rounded-xl p-4 text-text text-lg`}
+              placeholderTextColor={isDark ? "#94a3b8" : "#64748b"}
+              className={`border rounded-xl p-4 text-lg ${inputBgClass} ${resourceIdError ? "border-error" : borderClass} ${textClass}`}
               accessibilityLabel="Resource ID"
               accessibilityHint="Enter the resource identifier"
               testID="access-check-resource-id-input"
@@ -222,17 +232,17 @@ export default function AccessCheck() {
           <Card className="mb-6 border-success/30">
             <Text className="text-success font-bold mb-3">Scanned access details</Text>
             <View className="flex-row justify-between py-1">
-              <Text className="text-text-muted">Guild ID</Text>
-              <Text className="text-text font-medium">{scannedPayload.guildId}</Text>
+              <Text className={mutedTextClass}>Guild ID</Text>
+              <Text className={`font-medium ${textClass}`}>{scannedPayload.guildId}</Text>
             </View>
             <View className="flex-row justify-between py-1">
-              <Text className="text-text-muted">Resource ID</Text>
-              <Text className="text-text font-medium">{scannedPayload.resourceId}</Text>
+              <Text className={mutedTextClass}>Resource ID</Text>
+              <Text className={`font-medium ${textClass}`}>{scannedPayload.resourceId}</Text>
             </View>
             {scannedPayload.expiresAt && (
               <View className="flex-row justify-between py-1">
-                <Text className="text-text-muted">Expires</Text>
-                <Text className="text-text font-medium">{scannedPayload.expiresAt}</Text>
+                <Text className={mutedTextClass}>Expires</Text>
+                <Text className={`font-medium ${textClass}`}>{scannedPayload.expiresAt}</Text>
               </View>
             )}
           </Card>
