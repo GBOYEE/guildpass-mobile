@@ -1,6 +1,7 @@
 import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
 import React from "react";
-import { useRouter, usePathname } from "expo-router";
+import { useRouter } from "expo-router";
+import { useTheme } from "../features/theme";
 
 type AppHeaderProps = {
   title: string;
@@ -9,9 +10,12 @@ type AppHeaderProps = {
 
 export const AppHeader = ({ title, showBack = false }: AppHeaderProps) => {
   const router = useRouter();
+  const { isDark } = useTheme();
 
   return (
-    <SafeAreaView className="bg-white border-b border-border">
+    <SafeAreaView
+      className={`border-b ${isDark ? "bg-dark-card border-dark-border" : "bg-white border-border"}`}
+    >
       <View className="flex-row items-center px-4 py-3">
         {showBack && (
           <TouchableOpacity
@@ -23,7 +27,11 @@ export const AppHeader = ({ title, showBack = false }: AppHeaderProps) => {
             <Text className="text-primary text-2xl font-bold">←</Text>
           </TouchableOpacity>
         )}
-        <Text className="text-xl font-bold text-text flex-1">{title}</Text>
+        <Text
+          className={`text-xl font-bold flex-1 ${isDark ? "text-dark-text" : "text-text"}`}
+        >
+          {title}
+        </Text>
       </View>
     </SafeAreaView>
   );

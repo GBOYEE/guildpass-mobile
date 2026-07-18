@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { Card } from "./Card";
 import { RoleBadge } from "./RoleBadge";
+import { useTheme } from "../features/theme";
 
 type AccessStatusCardProps = {
   hasAccess: boolean;
@@ -16,6 +17,11 @@ export const AccessStatusCard = ({
   matchedRoles,
   requiredRoles,
 }: AccessStatusCardProps) => {
+  const { isDark } = useTheme();
+  const textClass = isDark ? "text-dark-text" : "text-text";
+  const mutedTextClass = isDark ? "text-dark-text-muted" : "text-text-muted";
+  const borderClass = isDark ? "border-dark-border" : "border-border";
+
   return (
     <Card className={`border-2 ${hasAccess ? "border-success" : "border-error"}`}>
       <View className="items-center mb-6" accessibilityLiveRegion="polite">
@@ -30,16 +36,16 @@ export const AccessStatusCard = ({
         <Text className={`text-2xl font-bold ${hasAccess ? "text-success" : "text-error"}`}>
           {hasAccess ? "Access Granted" : "Access Denied"}
         </Text>
-        {reason && <Text className="text-text-muted mt-2 text-center">{reason}</Text>}
+        {reason && <Text className={`mt-2 text-center ${mutedTextClass}`}>{reason}</Text>}
       </View>
 
-      <View className="border-t border-border pt-4">
-        <Text className="text-text font-bold mb-3">Requirements</Text>
+      <View className={`border-t pt-4 ${borderClass}`}>
+        <Text className={`font-bold mb-3 ${textClass}`}>Requirements</Text>
         <View className="flex-row flex-wrap">
           {requiredRoles.length > 0 ? (
             requiredRoles.map((role) => <RoleBadge key={role} name={role} />)
           ) : (
-            <Text className="text-text-muted italic">No role requirements specified</Text>
+            <Text className={`italic ${mutedTextClass}`}>No role requirements specified</Text>
           )}
         </View>
 

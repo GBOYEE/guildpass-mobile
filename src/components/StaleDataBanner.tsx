@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { formatLastSyncedAt } from "../lib/offlineCache";
 import type { StaleReason } from "../lib/staleQueryState";
+import { useTheme } from "../features/theme";
 
 type StaleDataBannerProps = {
   reason: StaleReason;
@@ -14,6 +15,10 @@ export function StaleDataBanner({
   lastSyncedAt,
   cautionary = false,
 }: StaleDataBannerProps) {
+  const { isDark } = useTheme();
+  const textClass = isDark ? "text-dark-text" : "text-text";
+  const mutedTextClass = isDark ? "text-dark-text-muted" : "text-text-muted";
+
   const lastSyncedLabel = lastSyncedAt ? formatLastSyncedAt(lastSyncedAt.getTime()) : null;
   const message =
     reason === "offline"
@@ -31,9 +36,9 @@ export function StaleDataBanner({
       accessibilityLabel={message}
     >
       <Text className="text-secondary font-bold text-sm mb-1">Stale data</Text>
-      <Text className="text-text text-sm">{message}</Text>
+      <Text className={`text-sm ${textClass}`}>{message}</Text>
       {lastSyncedLabel ? (
-        <Text className="text-text-muted text-xs mt-2">Last synced: {lastSyncedLabel}</Text>
+        <Text className={`text-xs mt-2 ${mutedTextClass}`}>Last synced: {lastSyncedLabel}</Text>
       ) : null}
     </View>
   );

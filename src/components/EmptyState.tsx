@@ -1,6 +1,7 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { Button } from "./Button";
+import { useTheme } from "../features/theme";
 
 type EmptyStateProps = {
   title: string;
@@ -10,13 +11,18 @@ type EmptyStateProps = {
 };
 
 export const EmptyState = ({ title, message, actionTitle, onAction }: EmptyStateProps) => {
+  const { isDark } = useTheme();
+  const bgClass = isDark ? "bg-dark-background" : "bg-background";
+  const textClass = isDark ? "text-dark-text" : "text-text";
+  const mutedTextClass = isDark ? "text-dark-text-muted" : "text-text-muted";
+
   return (
-    <View className="flex-1 justify-center items-center p-6 bg-background">
+    <View className={`flex-1 justify-center items-center p-6 ${bgClass}`}>
       <View className="w-20 h-20 bg-text-muted/10 rounded-full items-center justify-center mb-6">
-        <Text className="text-4xl">∅</Text>
+        <Text className={`text-4xl ${mutedTextClass}`}>∅</Text>
       </View>
-      <Text className="text-text text-2xl font-bold text-center mb-2">{title}</Text>
-      <Text className="text-text-muted text-center mb-8">{message}</Text>
+      <Text className={`text-2xl font-bold text-center mb-2 ${textClass}`}>{title}</Text>
+      <Text className={`text-center mb-8 ${mutedTextClass}`}>{message}</Text>
       {actionTitle && onAction && (
         <Button title={actionTitle} onPress={onAction} variant="outline" />
       )}

@@ -3,6 +3,8 @@ import { validateAndNormalizeAddress } from "../../lib/walletValidation";
 import { createManualConnector } from "./walletConnector.service";
 import { WalletConnector } from "./walletConnector.types";
 import { useSessionStore } from "../session/session.store";
+import { queryClient } from "../../lib/queryClient";
+import { clearWalletScopedCache } from "../../lib/walletScopedCache";
 
 export const useWallet = (): {
   walletAddress: string | null;
@@ -44,6 +46,7 @@ export const useWallet = (): {
   };
 
   const disconnect = () => {
+    clearWalletScopedCache(queryClient);
     storeDisconnect();
     void endSession();
   };
